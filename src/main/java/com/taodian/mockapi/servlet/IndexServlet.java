@@ -9,11 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.simple.JSONObject;
-
-import com.taodian.mockapi.ApiNameConvert;
-
-public class ApiServlet extends HttpServlet {
+public class IndexServlet extends HttpServlet {
 
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
@@ -46,25 +42,8 @@ public class ApiServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		JSONObject result = new JSONObject();
-		
-		String apiName = req.getParameter("name");
-		String params = req.getParameter("params");
-		
-    	ApiNameConvert anc = new ApiNameConvert();
-    	
-		String pac = anc.getApiPackage(apiName);
-		String name = anc.formateApiName(apiName);
-		
-		System.out.println(pac);
-		System.out.println(name);
-		
-		result.put("status", "err");
-		result.put("msg", "not found api name");
-		result.put("api_name", req.getParameter("name"));
-		result.put("params", req.getParameter("params"));
-		result.toJSONString();
-		resp.getWriter().print(result);
+		// TODO Auto-generated method stub
+		resp.getWriter().print("welcome to jetty");
 	}
 
 	@Override
@@ -87,6 +66,18 @@ public class ApiServlet extends HttpServlet {
 		return super.getLastModified(req);
 	}
 
+	@Override
+	protected void service(HttpServletRequest arg0, HttpServletResponse arg1)
+			throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		super.service(arg0, arg1);
+	}
 
+	@Override
+	public void service(ServletRequest arg0, ServletResponse arg1)
+			throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		super.service(arg0, arg1);
+	}
 
 }
