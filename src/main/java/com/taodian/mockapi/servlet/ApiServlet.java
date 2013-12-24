@@ -1,6 +1,7 @@
 package com.taodian.mockapi.servlet;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -10,8 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
 import com.taodian.mockapi.ApiNameConvert;
+import com.taodian.mockapi.service.ClickApi;
 
 public class ApiServlet extends HttpServlet {
 
@@ -48,11 +51,29 @@ public class ApiServlet extends HttpServlet {
 			throws ServletException, IOException {
 		JSONObject result = new JSONObject();
 		
+		//name = click_app_daily_report
 		String apiName = req.getParameter("name");
 		String params = req.getParameter("params");
 		
     	ApiNameConvert anc = new ApiNameConvert();
     	
+    	ClickApi obj = null;// new ClickApi();
+    	
+    	Class clz = Class.forName("com.taodian.mockapi.service.impl.ClickApiImpl");
+    	Object obj = clz.newInstance();
+    	//clz.
+    	Method m = obj.getMethod("tool_convert_long_url", Map.class)
+    	
+    	if (name.startsWith("credit")){s
+    		obj = new ClickApiImpl();
+	    	Map<String, Object> param = JSONValue.parse(params);
+	    	Object ret = m.invoke(null, param);
+	    	Result r = (Result) ret;
+	    	if(name == "click_app_daily_report"){
+	    		Result r = obj.clickAppDailyReport(param);
+	    	}
+    	}
+    
 		String pac = anc.getApiPackage(apiName);
 		String name = anc.formateApiName(apiName);
 		
