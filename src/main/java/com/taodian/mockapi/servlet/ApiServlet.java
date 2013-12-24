@@ -2,29 +2,21 @@ package com.taodian.mockapi.servlet;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import org.mortbay.log.Log;
 
 import com.taodian.mockapi.ApiNameConvert;
-import com.taodian.mockapi.service.ClickApi;
+import com.taodian.mockapi.Result;
 
 public class ApiServlet extends HttpServlet {
-
-	@Override
-	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		super.doDelete(req, resp);
-	}
-
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -33,81 +25,69 @@ public class ApiServlet extends HttpServlet {
 	}
 
 	@Override
-	protected void doHead(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		super.doHead(req, resp);
-	}
-
-	@Override
-	protected void doOptions(HttpServletRequest arg0, HttpServletResponse arg1)
-			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		super.doOptions(arg0, arg1);
-	}
-
-	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		JSONObject result = new JSONObject();
 		
-		//name = click_app_daily_report
-		String apiName = req.getParameter("name");
-		String params = req.getParameter("params");
-		
-    	ApiNameConvert anc = new ApiNameConvert();
-    	
-    	ClickApi obj = null;// new ClickApi();
-    	
-    	Class clz = Class.forName("com.taodian.mockapi.service.impl.ClickApiImpl");
-    	Object obj = clz.newInstance();
-    	//clz.
-    	Method m = obj.getMethod("tool_convert_long_url", Map.class)
-    	
-    	if (name.startsWith("credit")){s
-    		obj = new ClickApiImpl();
-	    	Map<String, Object> param = JSONValue.parse(params);
-	    	Object ret = m.invoke(null, param);
-	    	Result r = (Result) ret;
-	    	if(name == "click_app_daily_report"){
-	    		Result r = obj.clickAppDailyReport(param);
-	    	}
-    	}
-    
-		String pac = anc.getApiPackage(apiName);
-		String name = anc.formateApiName(apiName);
-		
-		System.out.println(pac);
-		System.out.println(name);
-		
 		result.put("status", "err");
-		result.put("msg", "not found api name");
-		result.put("api_name", req.getParameter("name"));
-		result.put("params", req.getParameter("params"));
+		
+		String apiName = null;
+		String params = "{}";
+    	Class clz = null;
+    	Result res = null;
+		
+		if(req.getParameter("name") != null){
+			apiName = req.getParameter("name");
+		}
+		
+		if(req.getParameter("params") != null){
+			params = req.getParameter("params");
+		}
+		
+		if(apiName != null){
+	    	ApiNameConvert anc = new ApiNameConvert();
+	    	
+	    	String pac = anc.getApiPackage(apiName);
+	    	String name = anc.formateApiName(apiName);
+	    	
+			try {
+				clz = Class.forName(pac);
+				Object apiIns = clz.newInstance();
+		    	Method apiMet = clz.getMethod(name, Map.class);
+		    	
+		    	Map<String, Object> param = (Map)JSONValue.parse(params);
+		    	
+		    	Object ret = apiMet.invoke(apiIns, param);
+		    	res = (Result) ret;
+		    	
+			} catch (Exception e) {
+				Log.debug("invoke method:" + e.toString());
+				e.printStackTrace();
+			}
+			
+			if(res != null){
+				if(res.status != null && res.status.length() > 0){
+					result.put("status", res.status);
+				}
+				if(res.msg != null && res.msg.length() > 0){
+					result.put("msg", res.msg);
+				}
+				if(res.code != null && res.code.length() > 0){
+					result.put("code", res.code);
+				}
+				if(res.result != null){
+					result.put("data", res.result);
+				}
+			}else {
+				result.put("msg", "Api error:result is null");					
+			}
+		}else{
+			result.put("msg", "Api error: lacking api name");
+		}
+
+
 		result.toJSONString();
 		resp.getWriter().print(result);
 	}
-
-	@Override
-	protected void doPut(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		super.doPut(req, resp);
-	}
-
-	@Override
-	protected void doTrace(HttpServletRequest arg0, HttpServletResponse arg1)
-			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		super.doTrace(arg0, arg1);
-	}
-
-	@Override
-	protected long getLastModified(HttpServletRequest req) {
-		// TODO Auto-generated method stub
-		return super.getLastModified(req);
-	}
-
-
 
 }

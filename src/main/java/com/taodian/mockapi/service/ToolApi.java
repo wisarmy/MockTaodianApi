@@ -4,7 +4,8 @@ import java.util.Map;
 
 import com.taodian.mockapi.Result;
 
-public interface TestApi {
+public interface ToolApi {
 
-	public Result test(Map<String, Object> param);
+	public Result toolConvertLongUrl(Map<String, Object> param);
+	
 }

@@ -8,7 +8,7 @@ public class ApiNameConvert {
 		String f = packageName.substring(0, 1);
 		String s = packageName.substring(1);		
 		
-		return "com.taodian.mockapi.service." + f.toUpperCase() + s + "Api";
+		return "com.taodian.mockapi.service.impl." + f.toUpperCase() + s + "ApiImpl";
 	}
 	
 	public String formateApiName(String name){
