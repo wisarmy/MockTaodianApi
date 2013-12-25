@@ -9,6 +9,8 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.PosixParser;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.servlet.ServletHandler;
 
@@ -22,6 +24,7 @@ import com.taodian.util.SimpleCacheApi;
 public class AppMain {
 	
 	public static CacheApi cache = new SimpleCacheApi();
+	private static Log log = LogFactory.getLog("com.taodian.appMain");
 	
 	public static void main(String[] args) throws Exception {
 		String port = System.getProperty("http.port", "8090");
@@ -33,42 +36,51 @@ public class AppMain {
 		
 		context.addServletWithMapping(ApiServlet.class, "/api/route");
 		context.addServletWithMapping(IndexServlet.class, "/*");
-		//server.stop();
-		//server.start();
 		
+		server.start();
 		
-
 		Options options = new Options();
+		options.addOption("short_data", true, "provide short_data path");
+		
 		CommandLineParser parser = new PosixParser();
 		CommandLine cmd = parser.parse( options, args);
 		
-		options.addOption("short_data", true, "provide short_data path");
 		
 		if(cmd.hasOption("short_data") || true){
-			String path = cmd.getOptionValue("short_data");
+			
+			String path = "data/" + cmd.getOptionValue("short_data");
 			
 			ShortUrlModel sum = new ShortUrlModel();
 			Map<String, Object> shortMap = new HashMap<String, Object>();
 			
+			log.info("FileReader path:" + path);
+			
 			try {
-				BufferedReader in = new BufferedReader(new FileReader("data/short_url.txt"));
+				
+				BufferedReader in = new BufferedReader(new FileReader(path));
 				String line = null;
 				
 				while((line = in.readLine()) != null){
 					
-					String[] arr = line.split(" ");
+					String[] arr = line.split(";");
 					
-					if(arr.length>0){
-						sum.shortKey = arr[0];
-						sum.numIid = Long.parseLong(arr[1]);
+					//length > 1 , prevent empty line
+					if(arr.length>1){
+						sum.shortKey = arr[0].trim();
+						sum.userId = Integer.parseInt(arr[1].trim());
+						sum.shopId = Long.parseLong(arr[2].trim());
+						sum.longUrl = arr[3].trim();
+					}else{
+						continue;
 					}
 					
 					shortMap.put(sum.shortKey, sum);
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.info("FileReader Exception:" + e.toString());
 			}
 			
+			cache.cleanAll();
 			cache.set("short_data", shortMap, 1000);
 		}
 	}

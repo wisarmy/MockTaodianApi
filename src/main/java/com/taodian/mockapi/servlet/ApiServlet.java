@@ -9,14 +9,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.mortbay.log.Log;
 
 import com.taodian.mockapi.ApiNameConvert;
 import com.taodian.mockapi.Result;
 
 public class ApiServlet extends HttpServlet {
+	private Log log = LogFactory.getLog("com.taodian.servlet");
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -50,21 +53,24 @@ public class ApiServlet extends HttpServlet {
 	    	String pac = anc.getApiPackage(apiName);
 	    	String name = anc.formateApiName(apiName);
 	    	
+	    	
 			try {
 				clz = Class.forName(pac);
 				Object apiIns = clz.newInstance();
 		    	Method apiMet = clz.getMethod(name, Map.class);
 		    	
+		    			
 		    	Map<String, Object> param = (Map)JSONValue.parse(params);
 		    	
 		    	Object ret = apiMet.invoke(apiIns, param);
 		    	res = (Result) ret;
 		    	
 			} catch (Exception e) {
-				Log.debug("invoke method:" + e.toString());
-				e.printStackTrace();
+				log.info("invoke Excetipon:" + e.toString());
 			}
 			
+			log.debug("class path:" + pac + ",method:" + name);
+			//log.info("method return :" + res.result);
 			if(res != null){
 				if(res.status != null && res.status.length() > 0){
 					result.put("status", res.status);
