@@ -160,4 +160,54 @@ public class ShortUrlModel implements Serializable, Cloneable{
 		
 		return m;
 	}
+
+	public long getShopId() {
+		return shopId;
+	}
+
+	public void setShopId(long shopId) {
+		this.shopId = shopId;
+	}
+
+	public int getUserId() {
+		return userId;
+	}
+
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+
+	public int getLibId() {
+		return libId;
+	}
+
+	public void setLibId(int libId) {
+		this.libId = libId;
+	}
+
+	public String getShortKey() {
+		return shortKey;
+	}
+
+	public void setShortKey(String shortKey) {
+		this.shortKey = shortKey;
+	}
+
+	public String getShortKeySource() {
+		return shortKeySource;
+	}
+
+	public void setShortKeySource(String shortKeySource) {
+		this.shortKeySource = shortKeySource;
+	}
+
+	public String getLongUrl() {
+		return longUrl;
+	}
+
+	public void setLongUrl(String longUrl) {
+		this.longUrl = longUrl;
+	}
+	
+	
 }

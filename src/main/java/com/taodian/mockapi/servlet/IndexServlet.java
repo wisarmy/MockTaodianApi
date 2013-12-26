@@ -43,7 +43,7 @@ public class IndexServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		resp.getWriter().print("welcome to jetty");
+		resp.getWriter().print("Welcome to TaodianApi Test Environment!");
 	}
 
 	@Override
