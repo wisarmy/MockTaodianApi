@@ -16,18 +16,16 @@ public class ToolApiImpl implements ToolApi {
 		Result res = Result.emptyOk();
 		Map<String, Object> data = new HashMap<String, Object>();
 		
-		String shortUrl = (String) param.get("short_url");
+		String shortKey = (String) param.get("short_key");
 		
-		Map<String, ShortUrlModel> shortMap = (Map<String, ShortUrlModel>) cache.get("short_data");
+		Map<String, Object> shortMaps = (Map<String, Object>) cache.get("short_data");
 		
-		ShortUrlModel sum = shortMap.get(shortUrl);
-		data.put("short_key", sum.shortKey);
-		data.put("user_id", sum.userId);
-		data.put("shop_id", sum.shopId);
-		data.put("long_url", sum.longUrl);
+		res.result = shortMaps.get(shortKey);
 		
-		res.result = data;
+		if(res.result == null){
+			res.status = "err";
+			res.msg = "The short_key is invalid.";
+		}
 		return res;
 	}
-
 }
